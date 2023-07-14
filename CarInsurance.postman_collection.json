@@ -1,0 +1,39 @@
+{
+	"info": {
+		"_postman_id": "cfeb72a6-e826-4af2-a768-97211bb2adcc",
+		"name": "CarInsurance",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Quote",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"age\": 25,\r\n    \"driving_experience\": 6,\r\n    \"driver_record\": 1,\r\n    \"claims\": 0,\r\n    \"car_value\": 50000,\r\n    \"annual_mileage\": 10000,\r\n    \"insurance_history\": 3,\r\n    \"car_category\": \"SUV\",\r\n    \"car_brand\": \"Audi\",\r\n    \"car_model\" : \"Q3\",\r\n    \"car_year\": 2021,\r\n    \"car_price\": 50000,\r\n    \"is_personal_use\" : true\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4200/api/quotation/car",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4200",
+					"path": [
+						"api",
+						"quotation",
+						"car"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

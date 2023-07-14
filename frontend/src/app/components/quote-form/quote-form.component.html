@@ -1,0 +1,291 @@
+<div class="quote-form container">
+  <h1 class="my-5">Get a quote</h1>
+  <form [formGroup]="quoteRequestForm" (ngSubmit)="onSubmit()">
+    <div class="my-3 form-group">
+      <div class="mb-2">Car category*</div>
+      <select class="form-select" formControlName="category">
+        <ng-container *ngIf="categories">
+          <option></option>
+          <option *ngFor="let category of categories">{{category}}</option>
+        </ng-container>
+      </select>
+      <div *ngIf="validationCondition('category')"
+           class="text-danger">
+        <div *ngIf="getValidationMsg('category','required')">
+          This field is required.
+        </div>
+      </div>
+    </div>
+    <div class="my-3 form-group">
+      <div class="mb-2">Car brand*</div>
+      <select class="form-select" formControlName="brand">
+        <ng-container *ngIf="quoteRequestForm.value.category">
+          <option></option>
+          <option *ngFor="let make of categoryMakeMap.get(quoteRequestForm.value.category)">{{make}}</option>
+        </ng-container>
+      </select>
+      <div *ngIf="validationCondition('brand')"
+           class="text-danger">
+        <div *ngIf="getValidationMsg('brand','required')">
+          This field is required.
+        </div>
+      </div>
+    </div>
+    <div class="my-3 form-group">
+      <div class="mb-2">Car model*</div>
+      <select class="form-select" formControlName="model">
+        <ng-container *ngIf="quoteRequestForm.value.brand && quoteRequestForm.value.category">
+          <option></option>
+          <option
+            *ngFor="let carModel of findModels(quoteRequestForm.value.brand, quoteRequestForm.value.category)">{{carModel}}</option>
+        </ng-container>
+      </select>
+      <div *ngIf="validationCondition('model')"
+           class="text-danger">
+        <div *ngIf="getValidationMsg('model','required')">
+          This field is required.
+        </div>
+      </div>
+    </div>
+    <div class="my-3 form-group">
+      <div class="mb-2">Car year*</div>
+      <select class="form-select" formControlName="year">
+        <ng-container
+          *ngIf="quoteRequestForm.value.brand && quoteRequestForm.value.category && quoteRequestForm.value.model">
+          <option></option>
+          <option
+            *ngFor="let carModel of findYears(quoteRequestForm.value.brand, quoteRequestForm.value.category,quoteRequestForm.value.model)">{{carModel.Year}}</option>
+        </ng-container>
+      </select>
+      <div *ngIf="validationCondition('year')"
+           class="text-danger">
+        <div *ngIf="getValidationMsg('year','required')">
+          This field is required.
+        </div>
+      </div>
+    </div>
+    <div class="my-3 form-group">
+      <label for="purchasePrice-input" class="mb-2">Car purchase price*</label>
+      <input class="form-control" id="purchasePrice-input" formControlName="purchasePrice">
+      <div *ngIf="validationCondition('purchasePrice')"
+           class="text-danger">
+        <div *ngIf="getValidationMsg('purchasePrice','required')">
+          This field is required.
+        </div>
+        <div *ngIf="getValidationMsg('purchasePrice','pattern')">
+          Please enter a valid number.
+        </div>
+      </div>
+    </div>
+    <div class="my-3 form-group">
+      <label for="age-input" class="form-label">Age*</label>
+      <input type="range" class="form-range" id="age-input" min="1" max="100" formControlName="age">
+      <span id="rangeval">{{ quoteRequestForm.value.age}}</span>
+    </div>
+    <div class="my-3 form-group">
+      <label for="drivingExperience-input" class="mb-2">Driving experience in year*</label>
+      <input class="form-control"
+             id="drivingExperience-input"
+             formControlName="drivingExperience">
+      <div *ngIf="validationCondition('drivingExperience')"
+           class="text-danger">
+        <div *ngIf="getValidationMsg('drivingExperience','required')">
+          This field is required.
+        </div>
+        <div *ngIf="getValidationMsg('drivingExperience','pattern')">
+          Please enter a valid number.
+        </div>
+      </div>
+    </div>
+    <div formGroupName="drivingRecord">
+      <div class="my-3 form-group">
+        <div class="mb-2">Did you have any fault traffic violations or accidents in the last 5 years?*</div>
+        <div class="d-flex flex-row">
+          <div class="form-check mx-2">
+            <input class="form-check-input" type="radio" value="true" id="drivingRecordStatus-radio-true"
+                   formControlName="status">
+            <label class="form-check-label" for="drivingRecordStatus-radio-true">
+              Yes
+            </label>
+          </div>
+          <div class="form-check mx-2">
+            <input class="form-check-input" type="radio" value="false" id="drivingRecordStatus-radio-false"
+                   formControlName="status" (ngModelChange)="resetCount('drivingRecord.count')">
+            <label class="form-check-label" for="drivingRecordStatus-radio-false">
+              No
+            </label>
+          </div>
+        </div>
+        <div *ngIf="validationCondition('drivingRecord.status')"
+             class="text-danger">
+          <div *ngIf="getValidationMsg('drivingRecord.status','required')">
+            This field is required.
+          </div>
+        </div>
+      </div>
+      <ng-container
+        *ngIf="quoteRequestForm.value.drivingRecord && quoteRequestForm.value.drivingRecord.status && quoteRequestForm.value.drivingRecord.status == 'true'">
+        <div class="my-3 form-group">
+          <label for="drivingRecord-count-input" class="mb-2">How many times?*</label>
+          <input class="form-control"
+                 id="drivingRecord-count-input"
+                 formControlName="count">
+        </div>
+        <div *ngIf="validationCondition('drivingRecord.count')"
+             class="text-danger">
+          <div *ngIf="getValidationMsg('drivingRecord.count','required')">
+            This field is required.
+          </div>
+          <div *ngIf="getValidationMsg('drivingRecord.count','pattern')">
+            Please enter a valid number.
+          </div>
+        </div>
+      </ng-container>
+    </div>
+    <div formGroupName="claims">
+      <div class="my-3 form-group">
+        <div class="mb-2">Did you ever claim the car insurance?*</div>
+        <div class="d-flex flex-row">
+          <div class="form-check mx-2">
+            <input class="form-check-input" type="radio" value="true" id="claimsStatus-radio-true"
+                   formControlName="status">
+            <label class="form-check-label" for="claimsStatus-radio-true">
+              Yes
+            </label>
+          </div>
+          <div class="form-check mx-2">
+            <input class="form-check-input" type="radio" value="false" id="claimsStatus-radio-false"
+                   formControlName="status" (ngModelChange)="resetCount('claims.count')">
+            <label class="form-check-label" for="claimsStatus-radio-false">
+              No
+            </label>
+          </div>
+        </div>
+        <div *ngIf="validationCondition('claims.status')"
+             class="text-danger">
+          <div *ngIf="getValidationMsg('claims.status','required')">
+            This field is required.
+          </div>
+        </div>
+      </div>
+      <ng-container
+        *ngIf="quoteRequestForm.value.claims && quoteRequestForm.value.claims.status && quoteRequestForm.value.claims.status == 'true'">
+        <div class="my-3 form-group">
+          <label for="claims-count-input" class="mb-2">How many times?*</label>
+          <input class="form-control"
+                 id="claims-count-input"
+                 formControlName="count">
+        </div>
+        <div *ngIf="validationCondition('claims.count')"
+             class="text-danger">
+          <div *ngIf="getValidationMsg('claims.count','required')">
+            This field is required.
+          </div>
+          <div *ngIf="getValidationMsg('claims.count','pattern')">
+            Please enter a valid number.
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <div class="my-3 form-group">
+      <label for="mileage-input" class="mb-2"> Total Mileage(km)*</label>
+      <input type="email" class="form-control" id="mileage-input" formControlName="mileage">
+      <div *ngIf="validationCondition('mileage')"
+           class="text-danger">
+        <div *ngIf="getValidationMsg('mileage','required')">
+          This field is required.
+        </div>
+        <div *ngIf="getValidationMsg('mileage','pattern')">
+          Please enter a valid number.
+        </div>
+      </div>
+    </div>
+    <div formGroupName="insuranceHistory">
+      <div class="my-3 form-group">
+        <div class="mb-2">Have you ever owned the car insurance?*</div>
+        <div class="d-flex flex-row">
+          <div class="form-check mx-2">
+            <input class="form-check-input" type="radio" value="true" id="insuranceHistoryStatus-radio-true"
+                   formControlName="status">
+            <label class="form-check-label" for="insuranceHistoryStatus-radio-true">
+              Yes
+            </label>
+          </div>
+          <div class="form-check mx-2">
+            <input class="form-check-input" type="radio" value="false" id="insuranceHistoryStatus-radio-false"
+                   formControlName="status" (ngModelChange)="resetCount('insuranceHistory.count')">
+            <label class="form-check-label" for="insuranceHistoryStatus-radio-false">
+              No
+            </label>
+          </div>
+        </div>
+        <div *ngIf="validationCondition('insuranceHistory.status')"
+             class="text-danger">
+          <div *ngIf="getValidationMsg('insuranceHistory.status','required')">
+            This field is required.
+          </div>
+        </div>
+      </div>
+      <ng-container
+        *ngIf="quoteRequestForm.value.insuranceHistory && quoteRequestForm.value.insuranceHistory.status && quoteRequestForm.value.insuranceHistory.status == 'true'">
+        <div class="my-3 form-group">
+          <label for="insuranceHistory-count-input" class="mb-2">How many times?*</label>
+          <input class="form-control"
+                 id="insuranceHistory-count-input"
+                 formControlName="count">
+        </div>
+        <div *ngIf="validationCondition('insuranceHistory.count')"
+             class="text-danger">
+          <div *ngIf="getValidationMsg('insuranceHistory.count','required')">
+            This field is required.
+          </div>
+          <div *ngIf="getValidationMsg('insuranceHistory.count','pattern')">
+            Please enter a valid number.
+          </div>
+        </div>
+      </ng-container>
+    </div>
+    <div>
+      <div class="my-3 form-group">
+        <div class="mb-2">What is your purpose of the car?*</div>
+        <div class="d-flex flex-row">
+          <div class="form-check mx-2">
+            <input class="form-check-input" type="radio" value="true" id="isPersonalUse-radio-true"
+                   formControlName="isPersonalUse">
+            <label class="form-check-label" for="isPersonalUse-radio-true">
+              Personal
+            </label>
+          </div>
+          <div class="form-check mx-2">
+            <input class="form-check-input" type="radio" value="false" id="isPersonalUse-radio-false"
+                   formControlName="isPersonalUse">
+            <label class="form-check-label" for="isPersonalUse-radio-false">
+              Commercial / Business
+            </label>
+          </div>
+        </div>
+        <div *ngIf="validationCondition('isPersonalUse')"
+             class="text-danger">
+          <div *ngIf="getValidationMsg('isPersonalUse','required')">
+            This field is required.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group form-check">
+      <input type="checkbox" class="form-check-input" id="confirm-checkbox" formControlName="confirm">
+      <label class="form-check-label" for="confirm-checkbox">I confirm that the above information is correct.</label>
+      <div *ngIf="validationCondition('confirm')"
+           class="text-danger">
+        <div *ngIf="getValidationMsg('confirm','required')">
+          This field is required.
+        </div>
+      </div>
+    </div>
+    <div *ngIf="errorMsg" class="text-danger">
+      {{errorMsg}}
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>

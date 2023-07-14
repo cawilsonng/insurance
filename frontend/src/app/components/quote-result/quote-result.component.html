@@ -1,0 +1,14 @@
+<div class="quoteResult">
+  <ng-container *ngIf="quotation.success==true">
+    <h1 class="my-3">Congratulation!</h1>
+    <h3 class="my-3">Your quotation result: </h3>
+    <h6 class="my-1">Premium: {{quotation.premium}}</h6>
+    <h6 class="my-1">Reference number: {{quotation.quote_reference}}</h6>
+  </ng-container>
+  <ng-container *ngIf="quotation.success==false">
+    <h1 class="my-3">Oops!</h1>
+    <h3 class="my-3">We can't get your quote according from your information</h3>
+    <h6 class="my-3">Please contact our insurance specialist for a custom quote.</h6>
+  </ng-container>
+  <button type="button" class="btn btn-primary my-2" routerLink="/">Home</button>
+</div>

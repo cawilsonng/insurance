@@ -1,0 +1,8 @@
+<app-page-layout>
+  <ng-container *ngIf="step==1">
+    <app-quote-form (quotationUpdateEvent)="setQuotation($event)"/>
+  </ng-container>
+  <ng-container *ngIf="step==2">
+    <app-quote-result [quotation]="quotation"/>
+  </ng-container>
+</app-page-layout>
